@@ -6,6 +6,42 @@ export async function POST(req: Request) {
   let prompt = "";
 
   if (mode === "continue") {
+  prompt = `
+You are continuing an anime story.
+
+PREVIOUS STORY:
+${previous_output}
+
+EPISODE NUMBER: ${episode_number}
+
+Continue the story EXACTLY from where it ended.
+
+DO NOT restart.
+DO NOT create a new story.
+
+Keep:
+- Same characters
+- Same world
+- Same powers
+
+Add:
+- New events
+- Action scenes
+- Dialogue
+- Plot development
+
+Write like a real anime episode.
+
+Format:
+
+## 🎬 EPISODE ${episode_number}
+
+Write 3–6 paragraphs with cinematic narration.
+
+End with a hook for the next episode.
+`;
+  }
+  
     prompt = `
 You are continuing an anime story.
 
