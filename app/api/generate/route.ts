@@ -55,6 +55,7 @@ Episode 1 (cinematic with dialogue and cliffhanger)
     headers: {
       "Authorization": `Bearer ${process.env.OPENAI_API_KEY}`,
       "Content-Type": "application/json",
+    
     },
     body: JSON.stringify({
       model: "gpt-4o-mini",
