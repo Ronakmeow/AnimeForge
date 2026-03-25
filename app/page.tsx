@@ -10,8 +10,11 @@ export default function Home() {
 
   const generateAnime = async () => {
     const res = await fetch("/api/generate", {
-      method: "POST",
-      body: JSON.stringify({
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({
         mode: "generate",
         theme,
         tone,
