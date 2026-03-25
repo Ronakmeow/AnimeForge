@@ -24,6 +24,7 @@ export default function Home() {
     setEpisode(1);
   };
 
+  
   const nextEpisode = async () => {
     const res = await fetch("/api/generate", {
       method: "POST",
