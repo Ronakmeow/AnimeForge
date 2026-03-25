@@ -1,51 +1,32 @@
 import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
-  const { mode, theme, tone, setting, previous_output, episode_number } = await req.json();
+  try {
+    const body = await req.json();
 
-  let prompt = "";
+    const prompt = body.mode === "continue"
+      ? `Continue this anime story:\n${body.previous_output}\nEpisode ${body.episode_number}`
+      : `Create an anime with theme ${body.theme}, tone ${body.tone}, setting ${body.setting}. Include Episode 1.`;
 
-  if (mode === "continue") {
-    prompt = `
-Continue this anime story:
+    const response = await fetch("https://api.openai.com/v1/responses", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        model: "gpt-4.1-mini",
+        input: prompt,
+      }),
+    });
 
-${previous_output}
+    const data = await response.json();
 
-Episode ${episode_number}
+    const text =
+      data?.output?.[0]?.content?.[0]?.text || "No response";
 
-Continue the story, do NOT restart.
-`;
-  } else {
-    prompt = `
-Create an anime:
-
-Theme: ${theme}
-Tone: ${tone}
-Setting: ${setting}
-
-Include:
-- Title
-- Characters
-- Powers
-- Episode 1
-`;
+    return NextResponse.json({ result: text });
+  } catch (err) {
+    return NextResponse.json({ result: "Error" });
   }
-
-  const res = await fetch("https://api.openai.com/v1/responses", {
-    method: "POST",
-    headers: {
-      "Authorization": `Bearer ${process.env.OPENAI_API_KEY}`,
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      model: "gpt-4.1-mini",
-      input: prompt
-    })
-  });
-
-  const data = await res.json();
-
-  return NextResponse.json({
-    result: data.output[0].content[0].text
-  });
 }
