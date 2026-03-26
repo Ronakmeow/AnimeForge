@@ -1,15 +1,14 @@
 {
-  "name": "anime-forge",
+  "name": "animeforge"
+  "version": "1.0.0"
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start"
-  },"dependencies": {
-  "next": "14.0.1",
-  "react": "^18.3.0",
-  "react-dom": "^18.3.0"
-  }
-    "openai": "^4.0.0"
+    "dev": "next dev"
+    "build": "next build"
+  },
+  "dependencies": {
+    "next": "14.0.1"
+    "react": "^18.3.0"
+    "react-doom": "^18.3.0"
   }
 }
