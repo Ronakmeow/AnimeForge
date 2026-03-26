@@ -1,64 +1,36 @@
 "use client";
-import { useState } from "react";
+
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
-  const [theme, setTheme] = useState("");
-  const [tone, setTone] = useState("");
-  const [setting, setSetting] = useState("");
-  const [story, setStory] = useState("");
-  const [episode, setEpisode] = useState(1);
+  const router = useRouter();
+  const [lastEpisode, setLastEpisode] = useState("");
 
-  const generateAnime = async () => {
-    const res = await fetch("/api/generate", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json"
-  },
-  body: JSON.stringify({
-        mode: "generate",
-        theme,
-        tone,
-        setting,
-      }),
-    });
+  // Load last episode from browser memory
+  useEffect(() => {
+    const saved = localStorage.getItem("lastEpisode");
+    if (saved) setLastEpisode(saved);
+  }, []);
 
-    const data = await res.json();
-    setStory(data.result);
-    setEpisode(1);
-  };
-
-  
-  const nextEpisode = async () => {
-    const res = await fetch("/api/generate", {
-      method: "POST",
-      body: JSON.stringify({
-        mode: "continue",
-        previous_output: story,
-        episode_number: episode + 1,
-      }),
-    });
-
-    const data = await res.json();
-    setStory((prev) => prev + "\n\n" + data.result);
-    setEpisode((prev) => prev + 1);
+  const continueStory = () => {
+    if (lastEpisode) {
+      router.push(`/story/${lastEpisode}`); // go to last episode
+    } else {
+      router.push("/story/ep-1"); // start from beginning
+    }
   };
 
   return (
-    <div style={{ padding: 20, color: "white", background: "#0f0f0f", minHeight: "100vh" }}>
-      <h1>🔥 AnimeForge</h1>
-
-      <input placeholder="Theme" onChange={(e) => setTheme(e.target.value)} /><br /><br />
-      <input placeholder="Tone" onChange={(e) => setTone(e.target.value)} /><br /><br />
-      <input placeholder="Setting" onChange={(e) => setSetting(e.target.value)} /><br /><br />
-
-      <button onClick={generateAnime}>Generate Anime</button>
-      <button onClick={nextEpisode} style={{ marginLeft: 10 }}>
-        Next Episode ➡️
+    <main style={{ padding: "20px" }}>
+      <h1>Welcome to AnimeForge</h1>
+      <button onClick={continueStory}>Continue Story</button>
+      <button
+        onClick={() => router.push("/story/ep-1")}
+        style={{ marginLeft: "10px" }}
+      >
+        Start New Story
       </button>
-
-      <pre style={{ marginTop: 20, whiteSpace: "pre-wrap" }}>
-        {story}
-      </pre>
-    </div>
+    </main>
   );
 }
